@@ -5,7 +5,7 @@ import geopandas as gpd
 app = Dash(__name__)
 server = app.server
 
-gdf = gpd.read_file("./combined.geojson")
+gdf = gpd.read_parquet("./combined.parquet")
 gdf = gdf.loc[gdf["total_pop"] > 100]
 gdf = gdf.replace(-666666666.0, 0)
 
