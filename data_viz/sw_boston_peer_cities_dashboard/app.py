@@ -9,12 +9,6 @@ gdf = gpd.read_parquet("./combined.parquet")
 gdf = gdf.loc[gdf["total_pop"] > 100]
 gdf = gdf.replace(-666666666.0, 0)
 
-gdf_lookup = {}
-cities_list = list(gdf.peer.unique())
-print("Cities list:", cities_list)
-for city in cities_list:
-    gdf_lookup[city] = gdf.loc[gdf["peer"] == city]
-
 vars = {
     "% Non-White": "pct_non_white",
     "% 0-Car Households": "pct_0_car_hh",
@@ -24,6 +18,20 @@ vars = {
     "Population Density": "people_per_acre",
 }
 var_options = list(vars.keys())
+
+data_lookup = {}
+cities_list = list(gdf.peer.unique())
+for city in cities_list:
+    city_info = {}
+    city_gdf = gdf.loc[gdf["peer"] == city]
+    city_info["gdf"] = city_gdf
+    city_info["centroid"] = city_gdf["geometry"].union_all().centroid
+    for var in vars.values():
+        min_max = {}
+        min_max["min"] = city_gdf[var].min()
+        min_max["max"] = city_gdf[var].max()
+        city_info[var] = min_max
+    data_lookup[city] = city_info
 
 zoom_levels = {
     "Baltimore": 9,
@@ -72,16 +80,16 @@ app.layout = html.Div(
     Input("cities_dropdown", "value"),
 )
 def display_choropleth1(selected_variable, selected_city):
-    gdf_filtered = gdf_lookup["SW Boston"]
+    gdf_filtered = data_lookup["SW Boston"]["gdf"]
     color_min = min(
-        gdf_lookup[selected_city][vars[selected_variable]].min(),
-        gdf_filtered[vars[selected_variable]].min(),
+        data_lookup["SW Boston"][vars[selected_variable]]["min"],
+        data_lookup[selected_city][vars[selected_variable]]["min"],
     )
     color_max = max(
-        gdf_lookup[selected_city][vars[selected_variable]].max(),
-        gdf_filtered[vars[selected_variable]].max(),
+        data_lookup["SW Boston"][vars[selected_variable]]["max"],
+        data_lookup[selected_city][vars[selected_variable]]["max"],
     )
-    centroid = gdf_filtered["geometry"].union_all().centroid
+    centroid = data_lookup["SW Boston"]["centroid"]
     fig = px.choropleth_map(
         gdf_filtered,
         geojson=gdf_filtered.geometry,
@@ -107,16 +115,16 @@ def display_choropleth1(selected_variable, selected_city):
     Input("variable_radio", "value"),
 )
 def display_choropleth2(selected_city, selected_variable):
-    gdf_filtered = gdf_lookup[selected_city]
+    gdf_filtered = data_lookup[selected_city]["gdf"]
     color_min = min(
-        gdf_lookup[selected_city][vars[selected_variable]].min(),
-        gdf_filtered[vars[selected_variable]].min(),
+        data_lookup["SW Boston"][vars[selected_variable]]["min"],
+        data_lookup[selected_city][vars[selected_variable]]["min"],
     )
     color_max = max(
-        gdf_lookup[selected_city][vars[selected_variable]].max(),
-        gdf_filtered[vars[selected_variable]].max(),
+        data_lookup["SW Boston"][vars[selected_variable]]["max"],
+        data_lookup[selected_city][vars[selected_variable]]["max"],
     )
-    centroid = gdf_filtered["geometry"].union_all().centroid
+    centroid = data_lookup[selected_city]["centroid"]
     fig = px.choropleth_map(
         gdf_filtered,
         geojson=gdf_filtered.geometry,
