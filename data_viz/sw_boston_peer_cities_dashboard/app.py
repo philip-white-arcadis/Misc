@@ -9,7 +9,11 @@ gdf = gpd.read_parquet("./combined.parquet")
 gdf = gdf.loc[gdf["total_pop"] > 100]
 gdf = gdf.replace(-666666666.0, 0)
 
+gdf_lookup = {}
 cities_list = list(gdf.peer.unique())
+print("Cities list:", cities_list)
+for city in cities_list:
+    gdf_lookup[city] = gdf.loc[gdf["peer"] == city]
 
 vars = {
     "% Non-White": "pct_non_white",
@@ -68,13 +72,15 @@ app.layout = html.Div(
     Input("cities_dropdown", "value"),
 )
 def display_choropleth1(selected_variable, selected_city):
-    gdf_filtered = gdf.loc[gdf["peer"] == "SW Boston"]
-    min = gdf.loc[gdf["peer"].isin([selected_city, "SW Boston"])][
-        vars[selected_variable]
-    ].min()
-    max = gdf.loc[gdf["peer"].isin([selected_city, "SW Boston"])][
-        vars[selected_variable]
-    ].max()
+    gdf_filtered = gdf_lookup["SW Boston"]
+    color_min = min(
+        gdf_lookup[selected_city][vars[selected_variable]].min(),
+        gdf_filtered[vars[selected_variable]].min(),
+    )
+    color_max = max(
+        gdf_lookup[selected_city][vars[selected_variable]].max(),
+        gdf_filtered[vars[selected_variable]].max(),
+    )
     centroid = gdf_filtered["geometry"].union_all().centroid
     fig = px.choropleth_map(
         gdf_filtered,
@@ -84,7 +90,7 @@ def display_choropleth1(selected_variable, selected_city):
         map_style="carto-positron",
         center={"lat": centroid.y, "lon": centroid.x},
         zoom=11,
-        range_color=[min, max],
+        range_color=[color_min, color_max],
         hover_data=[
             var + "_f" if var != "median_age" else var for var in vars.values()
         ],
@@ -101,13 +107,15 @@ def display_choropleth1(selected_variable, selected_city):
     Input("variable_radio", "value"),
 )
 def display_choropleth2(selected_city, selected_variable):
-    gdf_filtered = gdf.loc[gdf["peer"] == selected_city]
-    min = gdf.loc[gdf["peer"].isin([selected_city, "SW Boston"])][
-        vars[selected_variable]
-    ].min()
-    max = gdf.loc[gdf["peer"].isin([selected_city, "SW Boston"])][
-        vars[selected_variable]
-    ].max()
+    gdf_filtered = gdf_lookup[selected_city]
+    color_min = min(
+        gdf_lookup[selected_city][vars[selected_variable]].min(),
+        gdf_filtered[vars[selected_variable]].min(),
+    )
+    color_max = max(
+        gdf_lookup[selected_city][vars[selected_variable]].max(),
+        gdf_filtered[vars[selected_variable]].max(),
+    )
     centroid = gdf_filtered["geometry"].union_all().centroid
     fig = px.choropleth_map(
         gdf_filtered,
@@ -117,7 +125,7 @@ def display_choropleth2(selected_city, selected_variable):
         map_style="carto-positron",
         center={"lat": centroid.y, "lon": centroid.x},
         zoom=zoom_levels[selected_city],
-        range_color=[min, max],
+        range_color=[color_min, color_max],
         hover_data=[
             var + "_f" if var != "median_age" else var for var in vars.values()
         ],
