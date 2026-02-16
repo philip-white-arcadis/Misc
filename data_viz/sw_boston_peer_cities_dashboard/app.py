@@ -5,7 +5,7 @@ import geopandas as gpd
 import pandas as pd
 
 app = Dash(__name__)
-# server = app.server
+server = app.server
 
 # data_dir = Path("./Data")
 # gdfs = []
