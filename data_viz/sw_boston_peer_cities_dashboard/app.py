@@ -5,6 +5,7 @@ import geopandas as gpd
 import pandas as pd
 
 app = Dash(__name__)
+# server = app.server
 
 # data_dir = Path("./Data")
 # gdfs = []
@@ -95,6 +96,10 @@ def display_choropleth1(selected_variable, selected_city):
         center={"lat": centroid.y, "lon": centroid.x},
         zoom=11,
         range_color=[min, max],
+        hover_data=[
+            var + "_f" if var != "median_age" else var for var in vars.values()
+        ],
+        opacity=0.7,
     )
     fig.update_geos(fitbounds="locations", visible=False)
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
@@ -124,10 +129,14 @@ def display_choropleth2(selected_city, selected_variable):
         center={"lat": centroid.y, "lon": centroid.x},
         zoom=zoom_levels[selected_city],
         range_color=[min, max],
+        hover_data=[
+            var + "_f" if var != "median_age" else var for var in vars.values()
+        ],
+        opacity=0.7,
     )
     fig.update_geos(fitbounds="locations", visible=False)
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
     return fig
 
 
-app.run(debug=True)
+app.run(debug=False)
