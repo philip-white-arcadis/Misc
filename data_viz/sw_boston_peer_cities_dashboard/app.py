@@ -3,6 +3,8 @@ import plotly.express as px
 import geopandas as gpd
 
 app = Dash(__name__)
+app.title = "SW Boston Peer Cities Dashboard"
+app._favicon = "favicon.ico"
 server = app.server
 
 gdf = gpd.read_parquet("./combined.parquet")
