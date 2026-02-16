@@ -1,5 +1,4 @@
 dash
-pandas
 geopandas
 plotly-express
 gunicorn

@@ -1,20 +1,9 @@
 from dash import Dash, dcc, html, Input, Output
 import plotly.express as px
-from pathlib import Path
 import geopandas as gpd
-import pandas as pd
 
 app = Dash(__name__)
 server = app.server
-
-# data_dir = Path("./Data")
-# gdfs = []
-# for file in data_dir.rglob("*.geojson"):
-#     gdf = gpd.read_file(file)
-#     gdfs.append(gdf)
-# combined = pd.concat(gdfs)
-# gdf = gpd.GeoDataFrame(combined, geometry="geometry", crs=4326)
-# gdf.to_file("combined.geojson")
 
 gdf = gpd.read_file("./combined.geojson")
 gdf = gdf.loc[gdf["total_pop"] > 100]
@@ -139,4 +128,5 @@ def display_choropleth2(selected_city, selected_variable):
     return fig
 
 
-app.run(debug=False)
+if __name__ == "__main__":
+    app.run(debug=False)
