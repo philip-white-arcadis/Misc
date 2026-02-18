@@ -40,9 +40,11 @@ zoom_levels = {
     "Boston": 10,
     "Chicago": 8,
     "Denver": 10,
+    "Detroit": 9,
     "Los Angeles": 8,
     "Minneapolis": 9,
     "Philadelphia": 10,
+    "Pittsburgh": 9,
     "Portland": 9,
     "Salt Lake City": 9,
     "San Fransisco": 11,
@@ -101,9 +103,7 @@ def display_choropleth1(selected_variable, selected_city):
         center={"lat": centroid.y, "lon": centroid.x},
         zoom=11,
         range_color=[color_min, color_max],
-        hover_data=[
-            var + "_f" if var != "median_age" else var for var in vars.values()
-        ],
+        hover_data=vars.keys(),
         opacity=0.7,
     )
     fig.update_geos(fitbounds="locations", visible=False)
@@ -136,9 +136,7 @@ def display_choropleth2(selected_city, selected_variable):
         center={"lat": centroid.y, "lon": centroid.x},
         zoom=zoom_levels[selected_city],
         range_color=[color_min, color_max],
-        hover_data=[
-            var + "_f" if var != "median_age" else var for var in vars.values()
-        ],
+        hover_data=vars.keys(),
         opacity=0.7,
     )
     fig.update_geos(fitbounds="locations", visible=False)
