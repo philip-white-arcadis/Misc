@@ -119,6 +119,8 @@ def display_choropleth1(selected_variable, selected_city):
 )
 def display_choropleth2(selected_city, selected_variable):
     gdf_filtered = data_lookup[selected_city]["gdf"]
+    if selected_city == "Minneapolis":
+        gdf_filtered = gdf_filtered.reset_index(drop=True)
     color_min = min(
         data_lookup["SW Boston"][vars[selected_variable]]["min"],
         data_lookup[selected_city][vars[selected_variable]]["min"],
