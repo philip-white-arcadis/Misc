@@ -26,6 +26,7 @@ cities_list = list(gdf.peer.unique())
 for city in cities_list:
     city_info = {}
     city_gdf = gdf.loc[gdf["peer"] == city]
+    city_gdf["geometry"] = city_gdf["geometry"].simplify(tolerance=0.0005)
     city_info["gdf"] = city_gdf
     city_info["centroid"] = city_gdf["geometry"].union_all().centroid
     for var in vars.values():
