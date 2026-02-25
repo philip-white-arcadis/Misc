@@ -22,7 +22,7 @@ vars = {
 var_options = list(vars.keys())
 
 data_lookup = {}
-cities_list = list(gdf.peer.unique())
+cities_list = sorted(list(gdf.peer.unique()))
 for city in cities_list:
     city_info = {}
     city_gdf = gdf.loc[gdf["peer"] == city]
@@ -51,7 +51,7 @@ zoom_levels = {
     "San Fransisco": 11,
     "Seattle": 8,
     "SW Boston": 10,
-    "Washington DC": 10,
+    "Washington DC": 8,
 }
 
 app.layout = html.Div(
@@ -119,8 +119,8 @@ def display_choropleth1(selected_variable, selected_city):
 )
 def display_choropleth2(selected_city, selected_variable):
     gdf_filtered = data_lookup[selected_city]["gdf"]
-    if selected_city == "Minneapolis":
-        gdf_filtered = gdf_filtered.reset_index(drop=True)
+    # needed for peers with multiple counties since gaps in the index causes choropleth_map to drop features
+    gdf_filtered = gdf_filtered.reset_index(drop=True)
     color_min = min(
         data_lookup["SW Boston"][vars[selected_variable]]["min"],
         data_lookup[selected_city][vars[selected_variable]]["min"],
