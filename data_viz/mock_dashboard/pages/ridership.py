@@ -63,7 +63,7 @@ layout = dbc.Container(
                 ),
                 dbc.Col(
                     [
-                        html.H1("Daily Boardgins and Alightings Map"),
+                        html.H1("Daily Boardings and Alightings Map"),
                     ],
                     width=4,
                 ),
