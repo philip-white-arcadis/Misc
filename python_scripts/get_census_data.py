@@ -30,6 +30,12 @@ places = [
     ("Salt Lake City", "49", "035", "Salt Lake County"),
     ("San Fransisco", "06", "075", "San Francisco County"),
     ("Los Angeles", "06", "037", "Los Angeles County"),
+    ("Pittsburgh", "42", "003", "Allegheny County"),
+    ("Detroit", "26", "163", "Wayne County"),
+    ("Fairfax County", "51", "059", "Fairfax County"),
+    ("Arlington County", "51", "013", "Arlington County"),
+    ("Montgomery County", "24", "031", "Montgomery County"),
+    ("Prince George's County", "24", "033", "Prince George's County"),
 ]
 
 variables = {
@@ -59,6 +65,32 @@ for place in places:
         df.columns = [
             variables[col] if col in variables.keys() else col for col in df.columns
         ]
+
+        df["pct_non_white"] = 1 - (
+            df["total_pop_white_alone"].astype(int) / df["total_pop"].astype(int)
+        )
+        df["pct_0_car_hh"] = df["total_hh_0_car"].astype(int) / df["total_hh"].astype(
+            int
+        )
+        df["pct_commute_transit"] = df["total_commute_transit"].astype(int) / df[
+            "total_commute_all"
+        ].astype(int)
+
+        if "Baltimore" in place[0]:
+            peer = "Baltimore"
+        elif place[0] == "St Paul":
+            peer = "Minneapolis"
+        elif place[0] in [
+            "Arlington County",
+            "Fairfax County",
+            "Montgomery County",
+            "Prince George's County",
+        ]:
+            peer = "Washington DC"
+        else:
+            peer = place[0]
+        df["peer"] = peer
+
         df.to_csv(f"acs_5_year_2024_{place[0]}.csv", index=False)
     else:
         print(r.text, f"url: {r.url}", sep="\n")
@@ -76,6 +108,15 @@ for place in places:
         data = r.json()
         gdf = gpd.GeoDataFrame.from_features(data, crs=4326)
         gdf = gdf.merge(df, how="left", left_on="TRACT", right_on="tract")
+
+        gdf["people_per_acre"] = gdf["total_pop"].astype(int) / (
+            gdf["AREALAND"].astype(int) / 4046.9
+        )
+
+        for col in variables.values():
+            if col != "name":
+                gdf[col] = gdf[col].astype(float)
+
         gdf.to_file(f"acs_5_year_2024_{place[0]}.geojson", driver="GeoJSON")
     else:
         print(r.text, f"url: {r.url}", sep="\n")
