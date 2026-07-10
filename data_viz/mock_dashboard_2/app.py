@@ -20,7 +20,7 @@ navbar = dbc.NavbarSimple(
         ),
     ],
     brand_href="/",
-    color="#1E2D2F",
+    color="#010066",
     dark=True,
     links_left=True,
     class_name="nav",
