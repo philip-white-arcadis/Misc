@@ -1,0 +1,34 @@
+:root {
+  --primary: #E4610F;
+  --black: #1E2D2F;
+  --gray: #748386;
+}
+
+
+.about-page-container {
+  margin: 0.6em;
+}
+
+.dash-dropdown {
+  width: 120px;
+  max-width: 120px;
+}
+
+.dash-radio-items {
+  width: 120px;
+  max-width: 120px;
+}
+
+.dash-graph {
+  width: 100%;
+  height: 100%;
+}
+
+.row {
+  width: 6;
+}
+
+h1 {
+  font-size: 20px;
+  margin: 0.5em 0em 0.5em 0em;
+}
