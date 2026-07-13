@@ -8,6 +8,7 @@ app = Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.SANDSTONE]
 navbar = dbc.NavbarSimple(
     children=[
         dbc.NavItem(dbc.NavLink("Data Quality", href="/")),
+        dbc.NavItem(dbc.NavLink("Trip Counts", href="/trip-counts")),
         dbc.NavItem(dbc.NavLink("Daily Boardings", href="/daily-ons")),
         dbc.NavItem(dbc.NavLink("Monthly Boardings", href="/monthly-ons")),
     ],

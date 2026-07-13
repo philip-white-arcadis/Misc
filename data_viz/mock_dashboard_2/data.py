@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 trips_table = pd.read_parquet("./data/2026-1-1_2026-7-7_processed.parquet")
 
@@ -37,6 +38,10 @@ daily_trips = (
 daily_trip_counts = daily_trips.pivot(
     index="route_name", columns="date", values="num_trips"
 ).fillna(0)
+
+# temp for mocking the data quality chart
+daily_pct_reporting = daily_trip_counts.map(lambda x: np.random.uniform(70, 100))
+
 
 daily_boardings = daily_trips.pivot(
     index="route_name", columns="date", values="total_ons"
