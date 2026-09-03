@@ -1,0 +1,6 @@
+gtfs_zip_path = "./gtfs_current.zip"
+
+# list of ids of routes to keep
+route_ids = ["4"]
+
+output_gtfs_path = "./filtered_gtfs_carta.zip"
